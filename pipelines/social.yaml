@@ -1,0 +1,32 @@
+- implementation: nodestream.pipeline.extractors:FileExtractor
+  arguments:
+    globs:
+      - data/social.csv
+
+# Recall that each record in the CSV file has the following structure:
+#
+# person_id_a, person_id_b
+# 1, 2
+# 2, 3
+#
+# All data in nodestream is treated as JSON like data, so interpreting the CSV file as JSON like data, we get:
+# { "person_id_a": "1", "person_id_b": "2" }
+# { "person_id_a": "2", "person_id_b": "3" }
+#
+# So we can use JMESPath to extract the data from the CSV file as follows:
+- implementation: nodestream.interpreting:Interpreter
+  arguments:
+    interpretations:
+      # We define the source node as a Person node with the id field set to the value of the person_id_a field in the CSV file.
+      # We'll make this the origin of the ingestion.
+      - type: source_node
+        node_type: Person
+        key:
+          id: !jmespath "person_id_a"
+
+      # Here we connect the source node to another node of type Person using a KNOWS relationship.
+      - type: relationship
+        node_type: Person
+        relationship_type: KNOWS
+        node_key:
+          id: !jmespath "person_id_b"

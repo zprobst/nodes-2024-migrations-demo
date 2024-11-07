@@ -1,0 +1,33 @@
+- implementation: nodestream.pipeline.extractors:FileExtractor
+  arguments:
+    globs:
+      - data/locations.csv
+
+# Recall that each record in the CSV file has the following structure:
+#
+# person_id, location
+# 1, New York
+# 2, San Francisco
+#
+# All data in nodestream is treated as JSON like data, so interpreting the CSV file as JSON like data, we get:
+# {"person_id": 1, "location": "New York"}
+# {"person_id": 2, "location": "San Francisco"}
+#
+# So we can use JMESPath to extract the data from the CSV file as follows:
+- implementation: nodestream.interpreting:Interpreter
+  arguments:
+    interpretations:
+      # We define the source node as a Person node with the id field set to the value 
+      # of the person_id field in the CSV file. We'll make this the origin of the ingestion.
+      - type: source_node
+        node_type: Person
+        key:
+          id: !jmespath "person_id"
+
+      # Here we define the target node as a Location node with the name field set 
+      # to the value of the location field in the CSV file.
+      - type: relationship
+        node_type: Location
+        relationship_type: LIVES_IN
+        node_key:
+          id: !jmespath "location"

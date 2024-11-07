@@ -1,0 +1,31 @@
+- implementation: nodestream.pipeline.extractors:FileExtractor
+  arguments:
+    globs:
+      - data/people.csv
+
+# Recall that each record in the CSV file has the following structure:
+#
+# person_id,name,age
+# 1,Alice,25
+# 2,Bob,30
+#
+# All data in nodestream is treated as JSON like data, so interpreting the CSV file as JSON like data, we get:
+# {"person_id": 1, "name": "Alice", "age": 25}
+# {"person_id": 2, "name": "Bob", "age": 30}
+#
+# So we can use JMESPath to extract the data from the CSV file as follows:
+- implementation: nodestream.interpreting:Interpreter
+  arguments:
+    interpretations:
+      # We define the source node as a Person node with the id field set to the value of the person_id field 
+      # in the CSV file. We'll then add the name and age fields to the node.
+      - type: source_node
+        node_type: Person
+        key:
+          id: !jmespath "person_id"
+        properties:
+          name: !jmespath "name"
+          age: !jmespath "age"
+        additional_indexes:
+          - name
+  
