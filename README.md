@@ -44,6 +44,10 @@ person_id_a,person_id_b
 
 - [Pipeline](./pipelines/social.yaml)
 
+Below is a diagram of the schema:
+
+![Phase 1 Schema](./diagrams/phase-1.png)
+
 #### Instructions
 
 1. Uncomment the pipeline in `nodestream.yaml`
@@ -66,6 +70,7 @@ person_id,name,age
 
 - [Pipeline](./pipelines/people.yaml)
 
+![Phase 2 Schema](./diagrams/phase-2.png)
 
 #### Instructions
 
@@ -90,6 +95,8 @@ person_id,location
 ```
 
 - [Pipeline](./pipelines/locations.yaml)
+
+![Phase 3 Schema](./diagrams/phase-3.png)
 
 #### Instructions
 
